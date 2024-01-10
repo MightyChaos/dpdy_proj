@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="This is the supplementary webpage for CVPR submission -- Diffusion Priors for Dynamic Novel View Synthesis from Monocular Videos.">
+  <meta name="keywords" content="Nerfies, D-NeRF, NeRF, Dynamic novel view synthesis, dpdy, DpDy">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diffusion Priors for Dynamic View Synthesis Using Monocular Videos</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <!-- <link rel="icon" href="./static/images/favicon.svg"> -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Diffusion Priors for Dynamic View Synthesis from Monocular Videos </h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://mightychaos.github.io/">Chaoyang Wang</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://payeah.net/">Peiye Zhuang</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="https://aliaksandrsiarohin.github.io/aliaksandr-siarohin-website/">Aliaksandr Siarohin</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://research.snap.com/team/team-member.html#junli-cao">Junli Cao</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://guochengqian.github.io/">Guocheng Qian</a><sup>1,2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="http://hsinyinglee.com/">Hsin-Ying Lee</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="http://www.stulyakov.com/">Sergey Tulyakov</a><sup>1</sup>,
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Snap Inc.,</span>
+              <span class="author-block"><sup>2</sup>KAUST</span>
+          </div>
+        </div> 
+      </div> 
+    </div> 
+  </div>
+</section>
+
+<table align=center width=1000px>
+  <!-- <center><h2 class="title is-3">Novel view + depth map</h2></center>
+  <tr>
+          <center>
+          <div style='width:90%; text-align:justify; float:center'>
+          </center>
+  </tr> -->
+  <tr>
+    <td>
+      <center>
+        <video class='round' autoplay muted loop playsinline style='width:300px' src='./resources/demos/ours-backpack.mp4'>
+      </center>
+    </td>
+    <td>
+      <center>
+        <video class='round' autoplay muted loop playsinline style='width:300px' src='./resources/demos/ours-creeper.mp4'>
+      </center>
+    </td>
+    <td>
+      <center>
+        <video class='round' autoplay muted loop playsinline style='width:300px' src='./resources/demos/ours-spin.mp4'>
+      </center>
+    </td>
+    <td>
+      <center>
+        <video class='round' autoplay muted loop playsinline style='width:300px' src='./resources/demos/ours-mochi-high-five.mp4'>
+      </center>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <center>
+        <video class='round' autoplay muted loop playsinline style='width:300px' src='./resources/demos/ours-pillow.mp4'>
+      </center>
+    </td>
+    <td>
+      <center>
+        <video class='round' autoplay muted loop playsinline style='width:300px' src='./resources/demos/ours-block.mp4'>
+      </center>
+    </td>
+    <td>
+      <center>
+        <video class='round' autoplay muted loop playsinline style='width:300px' src='./resources/demos/ours-sriracha-tree.mp4'>
+      </center>
+    </td>
+    <td>
+      <center>
+        <video class='round' autoplay muted loop playsinline style='width:300px' src='./resources/demos/ours-wheel.mp4'>
+      </center>
+    </td>
+  </tr>
+
+</table>
+
+
+<section class="section">
+
+    
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Dynamic novel view synthesis aims to capture the temporal evolution of visual content within videos. 
+            Existing methods struggle to distinguishing between motion and structure, particularly in scenarios where camera poses are either unknown or constrained compared to object motion.
+            Furthermore, with information solely from reference images, it is extremely challenging to hallucinate unseen regions that are occluded or partially observed in the given videos.
+            To address these issues, we first finetune a pretrained RGB-D diffusion model on the video frames using a customization technique. 
+            Subsequently, we distill the knowledge from the finetuned model to a 4D representations encompassing both dynamic and static Neural Radiance Fields (NeRF) components. 
+            The proposed pipeline achieves geometric consistency while preserving the scene identity. 
+            We perform thorough experiments to evaluate the efficacy of the proposed method qualitatively and quantitatively. Our results demonstrate the robustness and utility of our approach in challenging cases, further advancing dynamic novel view synthesis. 
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </section>
+    <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Method</h2>
+          <img src="./resources/images/framework.png">
+          <h2 class="content has-text-justified">
+              To perform dynamic novel view synthesis given a video, we adopt a 4D representation consisting of
+              dynamic and static parts. We use two types of supervision. First, we render the input viewpoints at input time. Besides, we distill prior
+              knowledge of a pre-trained RGB-D diffusion model on random novel views using score distillation sampling. Furthermore, to mitigate the
+              domain gaps between the training distributions and in-the-wild images, we tune the RGB-D diffusion model using the reference images
+              with a customization technique prior to distillation.
+          </h2>
+        </div>
+      </div>
+    </div>
+<!-- </section> -->
+
+<!-- <section class="section"> -->
+    <!-- <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+    <h2 class="title is-3">Results</h2> -->
+    <table align=center width=900px>
+      <!-- <center><h2 class="title is-3">View synthesis results on the iPhone dataset</h2></center> -->
+      <tr>
+              <center>
+              <div style='width:90%; text-align:justify; float:center'>
+              </center>
+      </tr>
+          <br>
+          <tr>
+            <th style='font-size: 22px' align="center" colspan="4">Stablized view</th>
+            <th style='font-size: 22px' align="center">Bullet-time</th>
+          </tr>
+          <tr>
+              <!-- <th style='font-size: 22px' align="center">Train View</th> -->
+              <th style='font-size: 22px' align="center">T-NeRF</th>
+              <th style='font-size: 22px' align="center">Nerfies</th>
+              <th style='font-size: 22px' align="center">HyperNeRF</th>
+              <th style='font-size: 22px' align="center">DpDy (Ours)</th>
+              <th style='font-size: 22px' align="center">DpDy (Ours)</th>
+          </tr>
+  
+      <tr>
+        <!-- <td>
+            <center>
+              <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-apple-fixed.mp4'>
+            </center>
+        </td> -->
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/tnerf-apple-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/nerfies-apple-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-apple-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/ours-apple-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/ours-apple.mp4'>
+          </center>
+        </td>
+      </tr>
+
+      <tr>
+        <!-- <td>
+            <center>
+              <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-block-fixed.mp4'>
+            </center>
+        </td> -->
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/tnerf-block-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/nerfies-block-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-block-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/ours-block-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/ours-block.mp4'>
+          </center>
+        </td>
+      </tr>
+
+      <tr>
+        <!-- <td>
+            <center>
+              <video id="short_video" class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-paper-windmill-fixed.mp4'>
+            </center>
+        </td> -->
+        <td>
+          <center>
+            <video id="short_video" class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/tnerf-paper-windmill-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video id="short_video" class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/nerfies-paper-windmill-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video id="short_video" class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-paper-windmill-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video id="short_video" class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/ours-paper-windmill-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video id="short_video" class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/ours-paper-windmill.mp4'>
+          </center>
+        </td>
+      </tr>
+
+      <tr>
+        <!-- <td>
+            <center>
+              <video  class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-space-out-fixed.mp4'>
+            </center>
+        </td> -->
+        <td>
+          <center>
+            <video class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/tnerf-space-out-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video  class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/nerfies-space-out-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video  class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-space-out-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video  class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/ours-space-out-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video  class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/ours-space-out.mp4'>
+          </center>
+        </td>
+      </tr>
+
+      <tr>
+        <!-- <td>
+            <center>
+              <video  class='round' autoplay muted loop playsinline style='width:150px' src='./resources/user-study/hypernerf-teddy-fixed.mp4'>
+            </center>
+        </td> -->
+        <td>
+          <center>
+            <video  autoplay muted loop playsinline  style='width:150px' src='./resources/user-study/tnerf-teddy-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video  autoplay muted loop playsinline  style='width:150px' src='./resources/user-study/nerfies-teddy-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video  autoplay muted loop playsinline  style='width:150px' src='./resources/user-study/hypernerf-teddy-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video   autoplay muted  loop playsinline  style='width:150px' src='./resources/user-study/ours-teddy-fixed.mp4'>
+          </center>
+        </td>
+        <td>
+          <center>
+            <video   autoplay muted loop playsinline  style='width:150px' src='./resources/user-study/ours-teddy.mp4'>
+          </center>
+        </td>
+      </tr>
+ 
+
+      </table>
+        <!-- </div>
+      </div>
+    </div> -->
+    </section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is built using the template of <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  // Get the video element
+  var video = document.getElementById("short_video");
+
+  // Set the loop attribute to ensure continuous looping
+  video.loop = true;
+
+  // Set the playback range between frames 0 and 100
+  var startFrame = 0;
+  var endFrame = 1;
+
+  // Listen for the "timeupdate" event to continuously check the playback position
+  video.addEventListener("timeupdate", function() {
+      // Check if the current time is beyond the specified range
+      if (video.currentTime > endFrame) {
+          // Set the playback position back to the start frame
+          video.currentTime = startFrame;
+      }
+  });
+</script>
+
+</body>
+</html>
+
